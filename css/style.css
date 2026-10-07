@@ -1,203 +1,341 @@
-* { margin:0; padding:0; 
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+
+/* Calm phosphor terminal.
+   Turn the glow up or down with --glow (0 = none, 1 = default, 2 = loud). */
+:root {
+	--glow: 1;
+
+	--bg: #050a07;
+	--panel: #09120c;
+	--line: #1f3a2a;
+	--line-bright: #3f7a58;
+	--ink: #8fe0a8;
+	--dim: #5f9573;
+	--danger: #e08a78;
+	--glow-color: rgba(143, 224, 168, 0.35);
+
+	--mono: "Share Tech Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body { margin: 0; }
+
 body {
-	background: #f0f0f0; 
-	color: #ACADAE; 
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-}
-ul { 
-	list-style: none; 
-}
-a {
-	text-decoration:none;
-}
-a:hover, a:active {
-	text-decoration:none;
-	color: #1d7373;		
-}
-input {
-	background: #f0f0f0; 
-	border: 1px solid #ACADAE; 
-	padding: 16px 8px;
-	font-size: 1.3em;
-}
-	input:hover, input:active, select:hover, select:active {
-		border: 1px solid #1d7373;
-	}
-	
-/* Header Contents */
-.calcName {
-	width: 70%;
-  }
-.moneyTotal {
-	display: block;
-	float: left;
-	width: 25%;
-}
-.total .labelValue, 
-.total .moneyValue {
-	display: block;
-	float: left;
-	text-align: left;
-}
-.currencySelect {
-	border-radius: 0;
-	display: block;
-	float: left;
-	padding: 21px 0;
-	-webkit-appearance: none;
-	width: 5%;
+	background:
+		radial-gradient(120% 70% at 50% 0%, #0b1a11 0%, var(--bg) 60%),
+		var(--bg);
+	background-attachment: fixed;
+	color: var(--ink);
+	font-family: var(--mono);
+	font-size: 17px;
+	line-height: 1.4;
+	padding-bottom: 96px;
+	text-shadow: 0 0 calc(5px * var(--glow)) rgba(143, 224, 168, calc(0.18 * var(--glow)));
 }
 
-/* Page Inputs */
-input:required {
-	width: 30%;
+/* Very faint scanlines. Set opacity to 0 to remove. */
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 500;
+	opacity: 0.35;
+	background: repeating-linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0) 0,
+		rgba(0, 0, 0, 0) 2px,
+		rgba(0, 0, 0, 0.18) 3px
+	);
 }
-input:required:invalid, input:focus:invalid {
-	background: pink;
-	border: 1px solid red;
-	-moz-box-shadow: none;	
-}
-.labelValue, 
-.moneyValue  {
-	float: left;
-	padding: 10px;
-}
-	.moneyValue { 
-		width: 10%;
-	}
-	.labelValue { 
-		width: 50%; 
-	}
 
-/* Rows 
-where do i store the content?
-Fix alignment on static entry row
-Fix % change on static entry row 
-Make pressing entery be an add, no need for having button
-allow for keyboard nav, edit, delete
-edit on click of row
-*/
-.topBar { 
-	background: #7F96AD;
-	border-bottom: 1px solid #657A8E;
-	display: block; 
-	position: fixed; 
+input, select, button { font: inherit; color: inherit; text-shadow: inherit; }
+
+:focus-visible {
+	outline: 2px solid var(--ink);
+	outline-offset: 2px;
+}
+
+/* Header: name, currency, total */
+
+header {
+	position: sticky;
+	top: 0;
 	z-index: 100;
-	top: 0px; 
-	right: 0; 
-	left: 0; 
-	margin: 0;
-	padding: 12px 20px;
+	max-width: 480px;
+	margin: 0 auto;
+	background: var(--bg);
+	border: 1px solid var(--line);
+	border-top: 0;
+	border-radius: 0 0 12px 12px;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+	padding: 14px 18px 18px;
 }
-.coreContainer {
-	display: block; 
-	position: absolute; 
-	top: 70px; 
-	right: 0; 
-	left: 0; 
-	bottom: 0;
-}
-.tag {
-	cursor: move;
-	white-space: nowrap;
-	overflow: hidden;
-	margin: 10px;
-	padding: 10px;
-	background-color: #C8D5E2; 
-}
-.tag:hover { background: #91AEC9; 
-}
-.tag:focus { background: #c9f150; 
-}
-.new {
-	background: #c9f150;
-	white-space: nowrap;
-	overflow: hidden;
-	margin: 10px;
-	padding: 10px;
-	}
-	
-/* Buttons */
-.button {
-  background-color: transparent;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  color: transparent;
-  font-size: 13px;
-  text-decoration: none;
-  vertical-align: middle;
-  float: right;
-  border: none;
-  margin: 18px 4px 0 0;
-  padding: 2px 6px;
-  }
-.green {
-	margin-right: 10px;
-	}
-.button:hover {
-	background: #13315C;
-	color: #e2e2e2; 
-}
-.button:active {
-	background: #13315C;
-}
-.red:hover, 
-.red:active, 
-.tag:focus .red,
-.tag:active .red,
-.tag:hover .red  { 
-	color: #96230c; 
-	}
-.green:hover, 
-.green:active,
-.tag:focus .green,
-.tag:active .green,
-.tag:hover .green,
-.new .green { 
-	color: #5b7d04; 
-	}
 
-/* Bottom Nav Add icons */
+.topBar {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-template-areas:
+		"name currency"
+		"tagline tagline"
+		"total total";
+	align-items: center;
+	gap: 4px 14px;
+}
+
+.calcName {
+	grid-area: name;
+	min-width: 0;
+	background: transparent;
+	border: 0;
+	border-bottom: 1px dashed var(--line-bright);
+	padding: 4px 0;
+	font-size: 1.1rem;
+	color: var(--ink);
+}
+
+.calcName:focus {
+	outline: none;
+	border-bottom-style: solid;
+	border-bottom-color: var(--ink);
+}
+
+.tagline {
+	grid-area: tagline;
+	margin: 0;
+	color: var(--dim);
+	font-size: 0.85rem;
+	text-shadow: none;
+}
+
+.currencySelect {
+	grid-area: currency;
+	appearance: none;
+	background: var(--panel);
+	border: 1px solid var(--line-bright);
+	border-radius: 999px;
+	padding: 5px 14px;
+	cursor: pointer;
+	color: var(--ink);
+}
+
+.currencySelect:hover { border-color: var(--ink); }
+.currencySelect option { background: var(--panel); color: var(--ink); }
+
+.moneyTotal {
+	grid-area: total;
+	display: block;
+	margin-top: 10px;
+	font-size: clamp(2.4rem, 13vw, 3.6rem);
+	line-height: 1.1;
+	letter-spacing: 0.01em;
+	font-variant-numeric: tabular-nums;
+	overflow-wrap: anywhere;
+	text-shadow:
+		0 0 calc(8px * var(--glow)) var(--glow-color),
+		0 0 calc(22px * var(--glow)) rgba(143, 224, 168, calc(0.16 * var(--glow)));
+}
+
+/* Page body */
+
+.coreContainer {
+	max-width: 480px;
+	margin: 0 auto;
+	padding: 20px 16px 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.items { display: flex; flex-direction: column; gap: 10px; }
+
+.moneyValue,
+.labelValue {
+	width: 100%;
+	min-width: 0;
+	background: var(--bg);
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	padding: 10px 12px;
+	color: var(--ink);
+	caret-color: var(--ink);
+}
+
+.moneyValue {
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+
+.moneyValue:hover,
+.labelValue:hover { border-color: var(--line-bright); }
+
+.moneyValue:focus,
+.labelValue:focus {
+	outline: none;
+	border-color: var(--ink);
+	box-shadow: 0 0 calc(10px * var(--glow)) rgba(143, 224, 168, calc(0.18 * var(--glow)));
+}
+
+.moneyValue.invalid {
+	border-color: var(--danger);
+	color: var(--danger);
+}
+
+::placeholder { color: var(--dim); opacity: 1; }
+
+/* New item: dashed edge reads as an empty slot */
+
+.new {
+	display: grid;
+	grid-template-columns: 7.5rem 1fr;
+	grid-template-areas:
+		"amount label"
+		"add add";
+	gap: 8px 10px;
+	padding: 12px;
+	border: 1px dashed var(--line-bright);
+	border-radius: 10px;
+	background: var(--panel);
+}
+
+.new .moneyValue { grid-area: amount; }
+.new .labelValue { grid-area: label; }
+.new .button { grid-area: add; }
+
+/* Saved item rows */
+
+.tag {
+	display: grid;
+	grid-template-columns: auto 6rem 1fr auto;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 10px 10px 6px;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 10px;
+}
+
+.tag:focus-within {
+	border-color: var(--line-bright);
+	box-shadow: 0 0 calc(14px * var(--glow)) rgba(143, 224, 168, calc(0.1 * var(--glow)));
+}
+
+.tag.dragging { opacity: 0.4; }
+
+.tag.drop-target {
+	border-style: dashed;
+	border-color: var(--ink);
+}
+
+.handle {
+	cursor: grab;
+	color: var(--dim);
+	font-size: 1.3rem;
+	line-height: 1;
+	padding: 6px 4px;
+	user-select: none;
+}
+
+.handle:active { cursor: grabbing; }
+
+.empty {
+	margin: 12px 0 0;
+	text-align: center;
+	color: var(--dim);
+	text-shadow: none;
+}
+
+/* Buttons */
+
+.button {
+	background: transparent;
+	border: 1px solid var(--line-bright);
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.button:active { transform: translateY(1px); }
+
+.green.button {
+	padding: 11px 14px;
+	color: var(--ink);
+}
+
+.green.button:hover,
+.green.button:focus-visible {
+	background: rgba(143, 224, 168, 0.1);
+	border-color: var(--ink);
+	box-shadow: 0 0 calc(12px * var(--glow)) rgba(143, 224, 168, calc(0.2 * var(--glow)));
+}
+
+.red.button {
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	border-color: transparent;
+	color: var(--dim);
+	font-size: 0.95rem;
+}
+
+.red.button:hover,
+.red.button:focus-visible {
+	color: var(--danger);
+	border-color: var(--danger);
+	background: rgba(224, 138, 120, 0.08);
+}
+
+/* Bottom tab bar */
+
 nav {
 	position: fixed;
-	z-index: 200; 
-	right: 0; 
-	bottom: 0; 
-	left: 0; 
-	height: 100px;
-	display: block;
-	text-align: center;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 200;
+	background: var(--bg);
+	border-top: 1px solid var(--line);
+	padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
 nav ul {
-	list-style-type: none;
-	margin: 0;
+	list-style: none;
+	margin: 0 auto;
 	padding: 0;
+	max-width: 480px;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
 }
-nav ul a {
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	-ms-box-sizing: border-box;
-	width: 25%;
-	height: 100px;
-	float: left;
-	padding-top: 40px;
-	color: #13315C;
+
+nav a {
+	display: block;
+	padding: 16px 4px;
+	text-align: center;
+	text-decoration: none;
+	color: var(--dim);
+	font-size: 0.9rem;
+	border-top: 2px solid transparent;
+	margin-top: -1px;
+	text-shadow: none;
 }
-.active-tab {
-	border-top: 4px solid #13315C;
+
+nav a:hover { color: var(--ink); }
+
+nav a[aria-disabled="true"] { opacity: 0.55; cursor: default; }
+
+nav a.active-tab {
+	color: var(--ink);
+	border-top-color: var(--ink);
+	text-shadow: 0 0 calc(8px * var(--glow)) var(--glow-color);
+	box-shadow: 0 -8px calc(18px * var(--glow)) -10px rgba(143, 224, 168, calc(0.5 * var(--glow)));
 }
-.tab1 {
-	background: #7F96AD;
+
+@media (prefers-reduced-motion: reduce) {
+	* { transition: none !important; }
 }
-.tab2 {
-	background: #91AEC9;
-}
-.tab3 {
-	background: #AAC1D7;
-}
-.tab4 {
-	background: #C8D5E2;
+
+@media (min-width: 520px) {
+	header { margin-top: 16px; top: 16px; border-top: 1px solid var(--line); border-radius: 12px; }
 }
