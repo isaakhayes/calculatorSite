@@ -1,89 +1,61 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="color-scheme" content="dark">
+	<meta name="theme-color" content="#050a07">
 	<title>Tally Up</title>
-	<link rel="stylesheet" href="css/style.css" type="text/css" />
-	<script type="text/javascript" src="js/script.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+	<script src="js/script.js" defer></script>
 </head>
 
-<body> 
-<form ondrop="drop(event)" ondragover="allowDrop(event)">  
+<body>
 	<header>
-		<section class="topBar">	
-			<!-- Currency selector -->
-			<select class="currencySelect">	  
-			  <option value="American Dollar">$</option>
-			  <option value="Chinese Yen">¥</option>
-			  <option value="English Pound">£</option>
-			  <option value="Euro">₠</option>
-			  <option value="Mexican Peso">₱</option>
-			  <option value="Thai Baht">฿</option>   
+		<div class="topBar">
+			<!-- Budget name -->
+			<input class="calcName" id="calcName" value="My Monthly Budget" aria-label="Budget name">
+
+			<p class="tagline">Add amounts, watch the total. Saved on this device.</p>
+
+			<!-- Currency selector. Changes the symbol only, no exchange rates yet -->
+			<select class="currencySelect" id="currency" aria-label="Currency">
+				<option value="USD">$ USD</option>
+				<option value="EUR">&euro; EUR</option>
+				<option value="GBP">&pound; GBP</option>
+				<option value="CAD">$ CAD</option>
+				<option value="MXN">$ MXN</option>
+				<option value="CNY">&yen; CNY</option>
+				<option value="THB">&#3647; THB</option>
+				<option value="INR">&#8377; INR</option>
+				<option value="KES">KSh KES</option>
 			</select>
-			<!-- Total ammount of all money values -->
-			<input name="total" type="text" class="moneyTotal" readonly="readonly" pattern="^((\d+)|(\d{1,3})(\,\d{3}|)*)(\.\d{2}|)$" >
-			<!-- File name -->
-			<input class="calcName" value="My Monthly Budget">
-		</section> 
-	</header>	
-	
-	<section class="coreContainer">
-	
-	<!-- New content -->
-	  <section id="newContent" class="new" tabindex="0">
-			<input name="numeric" type="text" class="moneyValue" pattern="^((\d+)|(\d{1,3})(\,\d{3}|)*)(\.\d{2}|)$" placeholder="Amount" required>
-			<input name="labelName" type="text" class="labelValue" autofocus="" autocomplete="on" placeholder="Label this item"/>
-			<input type="button" class="green button" value="&#10004; Save" onclick="calculate(this.form);" > 
-	  </section>
-	    
-	<!-- Created contents -->
-	  <section id="drag1" class="tag" tabindex="0" draggable="true" ondragstart="drag(event)">
-			<input id="number4" name="numeric" type="text" class="moneyValue" pattern="^((\d+)|(\d{1,3})(\,\d{3}|)*)(\.\d{2}|)$" placeholder="Amount" required>
-			<input id="label4" name="labelName" type="text" class="labelValue"/>
-			<input type="button" class="green button" value="&#10004; Save" onclick="calculate(this.form);" >
-			<input type="button" class="red button" value="X Remove" onclick="remove(this.parent)">		
-	  </section>
-	    
-	  <section id="drag2" class="tag" tabindex="0" draggable="true" ondragstart="drag(event)">
-			<input name="numeric" type="text" class="moneyValue" pattern="^((\d+)|(\d{1,3})(\,\d{3}|)*)(\.\d{2}|)$" placeholder="Amount" required>
-			<input name="labelName" type="text" class="labelValue"/>
-			<input type="button" class="green button" value="&#10004; Save" onclick="calculate(this.form);" >
-			<input type="button" class="red button" value="X Remove" onclick="remove(this.parent)">	
-	  </section>
-	    
-	   <section id="drag3" class="tag" tabindex="0" draggable="true" ondragstart="drag(event)">
-			<input name="numeric" type="text" class="moneyValue" pattern="^((\d+)|(\d{1,3})(\,\d{3}|)*)(\.\d{2}|)$" placeholder="Amount" required value="45.79">
-			<input name="labelName" type="text" class="labelValue" value="Taco's with Ian"/>
-			<input type="button" class="green button" value="&#10004; Save" onclick="calculate(this.form);" >
-			<input type="button" class="red button" value="X Remove" onclick="remove(this.parent)">	
-	  </section>
-	    
-	</section>	
-	 
-	<nav> <!-- Need help making all changes happen on this page via a slide in animation -->
+
+			<!-- Total of all amounts -->
+			<output class="moneyTotal" id="total" aria-live="polite">$0.00</output>
+		</div>
+	</header>
+
+	<main class="coreContainer">
+		<!-- New item. Press Enter in either field to add -->
+		<form id="newItem" class="new">
+			<input class="moneyValue" id="newAmount" name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="Amount" aria-label="Amount">
+			<input class="labelValue" id="newLabel" name="label" type="text" autocomplete="off" placeholder="Label this item" aria-label="Label">
+			<button class="green button" type="submit">Add</button>
+		</form>
+
+		<!-- Saved items are built by js/script.js -->
+		<section id="items" class="items" aria-label="Items"></section>
+		<p id="empty" class="empty">No items yet. Enter an amount and a label above.</p>
+	</main>
+
+	<nav>
 		<ul>
-			<li><a class="active-tab tab1" href="#">Calculate</a></li>
-			<li><a class="tab2" href="#">Tips</a></li>
-			<li><a class="tab3" href="#">Settings</a></li>
-			<li><a class="tab4" href="#">Share</a></li>
+			<li><a class="active-tab tab1" href="#" aria-current="page">Calculate</a></li>
+			<li><a class="tab2" href="#" aria-disabled="true" tabindex="-1">Tips</a></li>
+			<li><a class="tab3" href="#" aria-disabled="true" tabindex="-1">Settings</a></li>
+			<li><a class="tab4" href="#" aria-disabled="true" tabindex="-1">Share</a></li>
 		</ul>
 	</nav>
-</form> 	
-<!-- 
-	Need help setting up currency changer, eventually add in currency exchange rates
-	
-	<label>Currency Overlay</label>
-		<select name="currencyList[]" onchange="keyHandler(this.form);" id="currencyList" class="">
-			<option value="" selected="selected">Please select</option>
-			<option value="CAD">CAD Canada Dollars</option>
-			<option value="CNY">CNY China Yuan Renminbi</option>
-			<option value="EUR">EUR Euro</option>
-			<option value="INR">INR India Rupees</option>
-			<option value="KES">KES Kenya Shillings</option>
-			<option value="MXN">MXN Mexico Pesos</option>
-			<option value="THB">THB Thailand Baht</option>
-			<option value="USD">USD United States of America Dollars</option>
-		</select>
-	-->
-    
 </body>
 </html>
